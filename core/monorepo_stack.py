@@ -1,23 +1,24 @@
-from aws_cdk import (core as cdk,
+from aws_cdk import (Stack, RemovalPolicy, Duration, CfnParameter,
                      aws_lambda as lambda_,
                      aws_codecommit as codecommit,
                      aws_iam as iam,
                      aws_s3 as s3,
                      aws_s3_deployment as s3_deployment)
+from constructs import Construct
 import os
 import zipfile
 import tempfile
 import json
 
 
-class MonorepoStack(cdk.Stack):
+class MonorepoStack(Stack):
     exported_monorepo: codecommit.Repository
 
-    def __init__(self, scope: cdk.Construct, construct_id: str, **kwargs) -> None:
+    def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
         ### Stack Parameters ###
-        monorepo_name = cdk.CfnParameter(self, 'MonorepoName',
+        monorepo_name = CfnParameter(self, 'MonorepoName',
                                          type='String',
                                          description='CodeCommit Monorepo name',
                                          default='monorepo-sample')
@@ -26,8 +27,8 @@ class MonorepoStack(cdk.Stack):
 
         function_name = f'{monorepo_name.value_as_string}-codecommit-handler'
         repository_name = monorepo_name.value_as_string
-        region = cdk.Stack.of(self).region
-        account = cdk.Stack.of(self).account
+        region = Stack.of(self).region
+        account = Stack.of(self).account
 
 
         monorepo = self.create_codecommit_repo(repository_name, branch_for_trigger)
@@ -48,7 +49,7 @@ class MonorepoStack(cdk.Stack):
                                            runtime=lambda_.Runtime.PYTHON_3_8,
                                            code=lambda_.Code.from_asset("core/lambda/"),
                                            handler="handler.main",
-                                           timeout=cdk.Duration.seconds(60),
+                                           timeout=Duration.seconds(60),
                                            dead_letter_queue_enabled=True,
                                            reserved_concurrent_executions=1)
         monorepo_lambda.add_permission("codecommit-permission",
@@ -68,7 +69,7 @@ class MonorepoStack(cdk.Stack):
     def create_codecommit_repo(self, repository_name, branch_for_trigger):
         tmp_dir = zip_sample()
         sample_bucket = s3.Bucket(self, 'MonoRepoSample',
-                                  removal_policy=cdk.RemovalPolicy.DESTROY,
+                                  removal_policy=RemovalPolicy.DESTROY,
                                   auto_delete_objects=True)
         sample_deployment = s3_deployment.BucketDeployment(self, 'DeployMonoRepoSample',
                                                            sources=[s3_deployment.Source.asset(tmp_dir)],

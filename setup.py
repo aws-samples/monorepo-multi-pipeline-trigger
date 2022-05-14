@@ -9,7 +9,7 @@ setuptools.setup(
     name="monorepo_codepipeline_trigger",
     version="0.0.1",
 
-    description="An empty CDK Python app",
+    description="CodeCommit monorepo multi pipeline triggers",
     long_description=long_description,
     long_description_content_type="text/markdown",
 
@@ -19,7 +19,8 @@ setuptools.setup(
     packages=setuptools.find_packages(where="monorepo_codepipeline_trigger"),
 
     install_requires=[
-        "aws-cdk.core==1.113.0",
+        "aws-cdk-lib>=2.0.0",
+        "constructs>=10.0.0"
     ],
 
     python_requires=">=3.6",

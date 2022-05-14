@@ -1,5 +1,5 @@
 from core.abstract_service_pipeline import ServicePipeline
-from aws_cdk import (core as cdk,
+from aws_cdk import (RemovalPolicy, CfnOutput, 
                      aws_iam as iam,
                      aws_codebuild as codebuild,
                      aws_codepipeline as codepipeline,
@@ -7,6 +7,7 @@ from aws_cdk import (core as cdk,
                      aws_codecommit as codecommit,
                      aws_s3 as s3,
                      aws_cloudfront as cloudfront)
+from constructs import Construct
 
 
 class HotsitePipeline(ServicePipeline):
@@ -14,7 +15,7 @@ class HotsitePipeline(ServicePipeline):
     def pipeline_name(self) -> str:
         return 'codepipeline-hotsite-main'
 
-    def build_pipeline(self, scope: cdk.Construct, code_commit: codecommit.Repository, pipeline_name: str, service_name: str):
+    def build_pipeline(self, scope: Construct, code_commit: codecommit.Repository, pipeline_name: str, service_name: str):
         select_artifact_build = codebuild.PipelineProject(scope, f'SelectArtifactBuild-{pipeline_name}',
                                                           build_spec=codebuild.BuildSpec.from_object(dict(
                                                               version='0.2',
@@ -36,7 +37,7 @@ class HotsitePipeline(ServicePipeline):
             website_index_document='index.html',
             website_error_document='error.html',
             auto_delete_objects=True,
-            removal_policy=cdk.RemovalPolicy.DESTROY)
+            removal_policy=RemovalPolicy.DESTROY)
 
         cloudfront_oai = cloudfront.OriginAccessIdentity(scope, f"Cloudfront OAI for {service_name}")
 
@@ -58,7 +59,7 @@ class HotsitePipeline(ServicePipeline):
                                                     comment='CDK created',
                                                     default_root_object="index.html")
 
-        cdk.CfnOutput(scope, f'{service_name}_url', value=dist.distribution_domain_name,
+        CfnOutput(scope, f'{service_name}_url', value=dist.distribution_domain_name,
                       export_name=f'{service_name}-url')
 
         return codepipeline.Pipeline(scope, pipeline_name,
