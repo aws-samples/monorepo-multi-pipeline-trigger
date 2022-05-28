@@ -4,7 +4,6 @@ cattrs==22.1.0
 constructs==10.1.7
 exceptiongroup==1.0.0rc5
 jsii==1.58.0
-monorepo-codepipeline-trigger==0.0.1
 pip==22.0.4
 publication==0.0.3
 python-dateutil==2.8.2
