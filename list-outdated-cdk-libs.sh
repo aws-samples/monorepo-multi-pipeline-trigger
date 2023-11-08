@@ -1,1 +1,1 @@
-pip list --format freeze --exclude-editable --outdated | grep cdk | awk '{print $1}'
+pip list --exclude-editable --outdated | grep cdk | awk '{print $1}'

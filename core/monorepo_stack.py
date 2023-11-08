@@ -46,7 +46,7 @@ class MonorepoStack(Stack):
         # Function must run with concurrency = 1 -- to avoid race condition
         monorepo_lambda = lambda_.Function(self, "CodeCommitEventHandler",
                                            function_name=function_name,
-                                           runtime=lambda_.Runtime.PYTHON_3_8,
+                                           runtime=lambda_.Runtime.PYTHON_3_11,
                                            code=lambda_.Code.from_asset("core/lambda/"),
                                            handler="handler.main",
                                            timeout=Duration.seconds(60),
