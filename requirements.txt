@@ -7,6 +7,6 @@ jsii==1.91.0
 pip==23.3.1
 publication==0.0.3
 python-dateutil==2.8.2
-setuptools==65.5.1
+setuptools==70.0.0
 six==1.16.0
 typing_extensions==4.8.0
